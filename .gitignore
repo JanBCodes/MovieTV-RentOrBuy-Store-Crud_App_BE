@@ -1,4 +1,4 @@
 /node_modules
 /toDoList
-/config
+/config.keys.env
 keys.env

@@ -29,7 +29,7 @@ const movieSchema = new Schema({
 
     genre:
     {
-        type: String,
+        type: Array,
         required: true
     },
 
@@ -75,7 +75,13 @@ const movieSchema = new Schema({
         required: true
     },
 
-    featured:
+    isFeatured:
+    {
+        type: Boolean,
+        required: true
+    },
+
+    isNewRelease:
     {
         type: Boolean,
         required: true
@@ -87,7 +93,6 @@ const movieSchema = new Schema({
         default:Date.now()
     }
     
-
 });
 
 const movieModel = mongoose.model('Movie', movieSchema);

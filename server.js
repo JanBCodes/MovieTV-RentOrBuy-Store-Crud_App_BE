@@ -1,19 +1,20 @@
 /* Importing Libraries */
 const express = require("express");
 const mongoose = require('mongoose');
-require('dotenv').config({ path: `config/Keys.env`});
+require('dotenv').config({ path: `config/keys.env`});
+
 
 /* Mapping the App Object to Express */
 const app = express();
+
 
 /* Importing Controller */
 const moviesController = require("./controller/movieController.js")
 const tvShowsController = require("./controller/tvShowsController.js")
 
 
-
 /* Mapping Json to Every CRUD Command */
-app.use(express.json())
+app.use(express.json());
 
 
 /* Mapping CRUD Command using express.Router */

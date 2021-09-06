@@ -4,9 +4,12 @@ const router = express.Router();
 const movieServices = require("../services/movieServices.js")
 
 router.get(`/`, movieServices.getAllMovies);
-// router.get(`/:name`, (req,res)=>{});
+router.get(`/:id`, movieServices.getASpecificMovie);
 router.post(`/`, movieServices.createAMovie);
-// router.put(`/:name`, (req,res)=>{});
-// router.delete(`/:name`, (req,res)=>{});
+router.put(`/:id`, movieServices.updateAMovie);
+router.delete(`/:id`, movieServices.deleteAMovie);
+
+// router.post(`/search`, movieServices.searchMovie);
+
 
 module.exports = router;
