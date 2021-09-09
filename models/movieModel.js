@@ -21,7 +21,7 @@ const movieSchema = new Schema({
         required: true
     },
 
-    releaseDate:
+    releaseDate: //Y,M.D
     {
         type: Date,
         required: true
@@ -29,8 +29,10 @@ const movieSchema = new Schema({
 
     genre:
     {
-        type: Array,
+        type: Array, //Check Boxes
+        default: "Other",
         required: true
+        
     },
 
     rating:
@@ -59,7 +61,7 @@ const movieSchema = new Schema({
 
     largePosterImg:
     {
-        type: String,
+        type: String, 
         default: "default.jpg"
     },
 
@@ -71,19 +73,21 @@ const movieSchema = new Schema({
 
     priceToBuy:
     {
-        type: Number,
+        type: Number, 
         required: true
     },
 
-    isFeatured:
+    isFeatured: // Drop Down List or Checked Box
     {
         type: Boolean,
+        default: true,
         required: true
     },
 
-    isNewRelease:
+    isNewRelease: // Drop Down List or Checked Box
     {
         type: Boolean,
+        default: true,
         required: true
     },
 

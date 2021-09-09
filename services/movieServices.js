@@ -1,44 +1,80 @@
-// const { v4: uuidv4 } = require('uuid'); // Uniquely identifies Pics
+const { v4: uuidv4 } = require('uuid'); // Uniquely identifies Pics
 
 const movieModel = require("../models/movieModel.js")
 
+/************************************
+        GET ALL MOVIES 
+************************************/
 
-// exports.getAllMovies = (req, res) => {
+/* exports.getAllMovies = (req, res) => {
 
-//     movieModel.find()
-//     .then(movies => {
+    movieModel.find()
+    .then(movies => {
 
-//         res.status(200).json({
+        res.status(200).json({
 
-//             message : `List of all movies (READ)`,
-//             total : movies.length,
-//             results : movies
+            message : `List of all movies (READ)`,
+            total : movies.length,
+            results : movies
 
-//         })
-//     })
-//     .catch(err => {
+        })
+    })
+    .catch(err => {
 
-//         res.status(500).json({
+        res.status(500).json({
 
-//             message : `Error  ${err}`
-//         })
+            message : `Error  ${err}`
+        })
 
-//     })    
+    })    
 
-// };
-
+};
+ */
 /************************************
         GET ALL MOVIES  && QUERY STRINGS 
 ************************************/
 exports.getAllMovies = (req,res)=>{
 
-    if(req.query.feat)
+    if(req.query.featMovie)
     {
-        movieModel.find({isFeatured : req.query.feat}) 
+        movieModel.find({isFeatured : req.query.featMovie}) // sort by Feat Movies
         .then(movies=>{
     
             res.json({
-                message : `All FEATURED Movies = ${req.query.feat}`,
+                message : `All FEATURED Movies = ${req.query.featMovie}`,
+                total: movies.length,
+                data : movies,
+                total: movies.length
+            })
+        })
+        .catch(err=>{
+    
+            res.status(500).json({
+                message : `Error  ${err}`
+            })
+        })   
+    }
+
+    else if(req.query.isNewMovie)  // sort by New Movies
+    {
+        let boolean;
+        const value = req.query.isNewMovie;
+
+        if(value === 'y')
+        {
+            boolean = true
+        }
+        else
+        {
+            boolean = false
+        }
+       
+        movieModel.find({isNewRelease : boolean})  
+        .then(movies=>{
+    
+            res.json({
+                message : `List of all NEW MOVIE RELEASES (${boolean})`,
+                total: movies.length,
                 data : movies,
                 total: movies.length
             })
@@ -50,35 +86,27 @@ exports.getAllMovies = (req,res)=>{
             })
     
         })   
-
     }
 
-    else if(req.query.isNew)
+    else if(req.query.movieRelDate)   // SORT by Release Date // movies?relDate=asc  // DATE DATA TYPE //Y,M.D **************
     {
-       
-        let status;
-        const value = req.query.isNew;
+        let relDate = req.query.movieRelDate
+        let sortBy;
 
-        console.log(value)
-
-        if(value === 'y')
+        if(relDate === `asc`)
+        { 
+            sortBy = 1  //sort acending order
+        }
+        else if(relDate === `des`)
         {
-            status = true
+            sortBy = -1 //sort by decending order
         }
 
-        else
-        {
-            status = false
-        }
-       
-        console.log(status)
-
-
-        movieModel.find({isNewRelease : status})  
+        movieModel.find().sort({releaseDate: sortBy})
         .then(movies=>{
-    
-            res.json({
-                message : `List of all NEW MOVIE RELEASES `,
+                res.json({
+                message : `List of all Movies by RELEASE DATE (${relDate} order) `,
+                total: movies.length,
                 data : movies,
                 total: movies.length
             })
@@ -89,19 +117,107 @@ exports.getAllMovies = (req,res)=>{
                 message : `Error  ${err}`
             })
     
+        })   
+    }
+
+    else if(req.query.movieGenre)   // sort by GENRE DATA TYPE - ARRAY
+    {
+        let movieGenre = req.query.movieGenre
+
+        movieModel.find( { genre: { $all: [movieGenre] } } )
+        .then(movies=>{
+    
+            res.json({
+                message : `List of all Movies by GENRE (${movieGenre})`,
+                total: movies.length,
+                data : movies,
+                total: movies.length
+            })
+        })
+        .catch(err=>{
+    
+            res.status(500).json({
+                message : `Error  ${err}`
+            })
+    
+        })   
+    }
+
+    else if(req.query.movieRate)   // sort by RATING
+    {
+        let movieRate = req.query.movieRate
+        let sortBy;
+
+        if(movieRate === `asc`)
+        { 
+            sortBy = 1  //sort acending order
+        }
+        else if(movieRate === `des`)
+        {
+            sortBy = -1 //sort by decending order
+        }
+
+        movieModel.find().sort({rating: sortBy})
+        .then(movies=>{
+    
+            res.json({
+                message : `List of all Movies by RATING (${movieRate} order)`,
+                total: movies.length,
+                data : movies,
+                total: movies.length
+            })
+        })
+        .catch(err=>{
+    
+            res.status(500).json({
+                message : `Error  ${err}`
+            })
+    
+        })   
+    }
+
+    else if(req.query.movieUserScore)   // sort by Movie User Score
+    {
+        let movieUserScore = req.query.movieUserScore;
+        let sortBy;
+
+        if(movieUserScore === `asc`)
+        { 
+            sortBy = 1  //sort acending order
+        }
+        else if(movieUserScore === `des`)
+        {
+            sortBy = -1 //sort by decending order
+        }
+
+        movieModel.find().sort({userScore: sortBy})
+        .then(movies=>{
+    
+            res.json({
+                message : `List of all Movies by USER SCORE (${movieUserScore} order)`,
+                total: movies.length,
+                data : movies,
+                total: movies.length
+            })
+        })
+        .catch(err=>{
+    
+            res.status(500).json({
+                message : `Error  ${err}`
+            })
         })   
     }
 
     else
     {
         movieModel.find()
-        .then(movie=>{
+        .then(movies=>{
     
             res.json({
                 message : `List of all ALL MOVIES`,
-                total: movie.length,
-                data : movie,
-                total: movie.length
+                total: movies.length,
+                data : movies,
+                total: movies.length
             })
         })
         .catch(err=>{
@@ -117,18 +233,124 @@ exports.getAllMovies = (req,res)=>{
 
 
 /************************************
-        CREATE A MOVIE
+        CREATE A MOVIE - this needs ADMIN Log IN Validation Fix!!
 ************************************/
 exports.createAMovie = (req,res) => {
    
     const newMovieData  = req.body
+        console.log(newMovieData) 
+        console.log(req.files) // null
 
-    console.log(newMovieData) 
-                
+    let absoluteAddressSM;
+    let absoluteAddressBG;
+
+    let smallPosterImg = req.files.smallPosterImg.mimetype
+    let largePosterImg = req.files.largePosterImg.mimetype
+
+        /************** Validation of IMAGE TYPE for UpLoad **************/
+
+        if(smallPosterImg.includes("image")) //return true/false
+        {
+            const uuid = uuidv4();
+
+            const smallPosterImgUP = req.files.smallPosterImg.name
+
+            const uuidPicNameforSM = `${uuid}_${smallPosterImgUP}`
+
+            absoluteAddressSM = `${process.cwd()}/assets/img/movieBannerSM/${uuidPicNameforSM}`
+
+            newMovieData.smallPosterImg = uuidPicNameforSM
+
+        }
+        else
+        {                
+            res.status(400).json({
+                message : `The Small File Uploaded should be in an .JPEG .JPG .ICO .PNG .TIF .WEBP or .GIF Format`,
+            })
+        }
+
+        if(largePosterImg.includes("image") ) //return true/false
+        {
+            const uuid = uuidv4();
+
+            const largePosterImgUP = req.files.largePosterImg.name
+
+            const uuidPicNameforBG = `${uuid}_${largePosterImgUP}`
+
+            absoluteAddressBG = `${process.cwd()}/assets/img/movieBannerBIG/${uuidPicNameforBG}`
+
+            newMovieData.largePosterImg = uuidPicNameforBG
+
+        }
+        else
+        {                
+            res.status(400).json({
+                message : `The Large File Uploaded should be in an .JPEG .JPG .ICO .PNG .TIF .WEBP or .GIF Format`,
+            })
+        }
+
+
+        req.files.smallPosterImg.mv(absoluteAddressSM) // Returns Promise (can take CB fn)
+        req.files.largePosterImg.mv(absoluteAddressBG) // Returns Promise (can take CB fn)
+        .then()
+        .then(() => {
+
+                const movie = new movieModel(newMovieData);
+
+                    movie.save() //Returns Promise
+                    .then(movie => {
+            
+                        res.status(201).json({
+                            message : `A new movie was successfully CREATED`,
+                            results : movie
+                        })
+                    })
+                    .catch(err => {
+            
+                        res.status(500).json({
+                            message : `Error  ${err}`
+                        })
+                    })
+
+            })
+            .catch(err => {
+
+                res.status(500).json({
+                    message : `Error  ${err}`
+                })
+            })
+    // }
+
+};
+
     
-/************** Validation to be added (For duplicate) **************/
-  
-        const movie = new movieModel(newMovieData);
+    // if(smallPosterImg === undefined || largePosterImg === undefined)
+    // {
+    //     const movie = new movieModel(newMovieData);
+
+    //     movie.save() //Returns Promise
+    //     .then(movie => {
+
+    //         res.status(201).json({
+    //             message : `A new movie was successfully CREATED with "default Img"`,
+    //             results : movie
+    //         })
+    //     })
+    //     .catch(err => {
+
+    //         res.status(500).json({
+    //             message : `Error  ${err}`
+    //         })
+    //     })
+    // }
+    // else
+    // {
+
+
+/************** Validation **************/
+
+
+/*         const movie = new movieModel(newMovieData);
         movie.save()
         .then(movie => {
 
@@ -143,11 +365,11 @@ exports.createAMovie = (req,res) => {
                 message : `Error  ${err}`
             })
         })
-};
+}; */
 
 
 /************************************
-        DELETE A MOVIE BASED ON ID
+        DELETE A MOVIE BASED ON ID - this needs ADMIN Log IN Validation Fix!!
 ************************************/
 exports.deleteAMovie = (req,res)=>{
 
@@ -179,7 +401,7 @@ exports.deleteAMovie = (req,res)=>{
 
 
 /************************************
-        FIND && UPDATE A MOVIE BASED ON ID
+        FIND && UPDATE A MOVIE BASED ON ID - this needs ADMIN Log IN Validation Fix!!
 ************************************/
 exports.updateAMovie = (req,res) => {
 
