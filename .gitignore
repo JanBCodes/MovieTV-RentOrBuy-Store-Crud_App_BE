@@ -1,5 +1,4 @@
 node_modules/
 /toDoList
 config/keys.env
-keys.env
-config
+/services

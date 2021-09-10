@@ -236,65 +236,91 @@ exports.getAllMovies = (req,res)=>{
         CREATE A MOVIE - this needs ADMIN Log IN Validation Fix!!
 ************************************/
 exports.createAMovie = (req,res) => {
-   
-    const newMovieData  = req.body
-        console.log(newMovieData) 
-        console.log(req.files) // null
 
     let absoluteAddressSM;
     let absoluteAddressBG;
+    let smallPosterImg;
+    let largePosterImg;
+   
+    const newMovieData  = req.body
 
-    let smallPosterImg = req.files.smallPosterImg.mimetype
-    let largePosterImg = req.files.largePosterImg.mimetype
+    const movie = new movieModel(newMovieData);
 
-        /************** Validation of IMAGE TYPE for UpLoad **************/
+    movie.save() //Returns Promise
+    .then(movie => {
 
-        if(smallPosterImg.includes("image")) //return true/false
-        {
-            const uuid = uuidv4();
+        res.status(201).json({
+            message : `A new movie was successfully CREATED`,
+            results : movie
+        })
+    })
+    .catch(err => {
 
-            const smallPosterImgUP = req.files.smallPosterImg.name
+        res.status(500).json({
+            message : `Error  ${err}`
+        })
+    })
 
-            const uuidPicNameforSM = `${uuid}_${smallPosterImgUP}`
+    
 
-            absoluteAddressSM = `${process.cwd()}/assets/img/movieBannerSM/${uuidPicNameforSM}`
+    console.log(req.files) // if NULL no UPLOADs
 
-            newMovieData.smallPosterImg = uuidPicNameforSM
+    if(req.files === null) // 
+    {
 
-        }
-        else
-        {                
-            res.status(400).json({
-                message : `The Small File Uploaded should be in an .JPEG .JPG .ICO .PNG .TIF .WEBP or .GIF Format`,
-            })
-        }
+    }    
+    else
+    {
 
-        if(largePosterImg.includes("image") ) //return true/false
-        {
-            const uuid = uuidv4();
-
-            const largePosterImgUP = req.files.largePosterImg.name
-
-            const uuidPicNameforBG = `${uuid}_${largePosterImgUP}`
-
-            absoluteAddressBG = `${process.cwd()}/assets/img/movieBannerBIG/${uuidPicNameforBG}`
-
-            newMovieData.largePosterImg = uuidPicNameforBG
-
-        }
-        else
-        {                
-            res.status(400).json({
-                message : `The Large File Uploaded should be in an .JPEG .JPG .ICO .PNG .TIF .WEBP or .GIF Format`,
-            })
-        }
+        smallPosterImg = req.files.smallPosterImg.mimetype //?? if undefined : Throws Error Fix!
+        largePosterImg = req.files.largePosterImg.mimetype //?? if undefined : Throws Error
 
 
-        req.files.smallPosterImg.mv(absoluteAddressSM) // Returns Promise (can take CB fn)
-        req.files.largePosterImg.mv(absoluteAddressBG) // Returns Promise (can take CB fn)
-        .then()
-        .then(() => {
 
+    }
+
+        // smallPosterImg = req.files.smallPosterImg.mimetype //?? if undefined : Throws Error Fix!
+        // largePosterImg = req.files.largePosterImg.mimetype //?? if undefined : Throws Error
+
+    /************** Validation of IMAGE TYPE for UpLoad **************/
+
+    if(smallPosterImg.includes("image")) //return true/false
+    {        
+        const uuid = uuidv4();
+        const smallPosterImgUP = req.files.smallPosterImg.name
+        const uuidPicNameforSM = `${uuid}_${smallPosterImgUP}`
+        absoluteAddressSM = `${process.cwd()}/assets/img/movieBannerSM/${uuidPicNameforSM}`
+        newMovieData.smallPosterImg = uuidPicNameforSM
+    }
+    
+    if (largePosterImg.includes("image") ) //return true/false
+    {
+        const uuid = uuidv4();
+        const largePosterImgUP = req.files.largePosterImg.name
+        const uuidPicNameforBG = `${uuid}_${largePosterImgUP}`
+        absoluteAddressBG = `${process.cwd()}/assets/img/movieBannerBIG/${uuidPicNameforBG}`
+        newMovieData.largePosterImg = uuidPicNameforBG
+    }
+
+
+
+
+
+    if(absoluteAddressSM == undefined || absoluteAddressBG == undefined)
+    {
+        res.status(404).json({
+            message : `Please upload IMAGE Format or Leave Blank`
+        })
+    }
+    else
+    {
+        console.log(absoluteAddressSM)
+        console.log(absoluteAddressBG)
+
+            req.files.smallPosterImg.mv(absoluteAddressSM) // Returns Promise (can take CB fn)
+            req.files.largePosterImg.mv(absoluteAddressBG) // Returns Promise (can take CB fn)
+            .then(() => {
+                
                 const movie = new movieModel(newMovieData);
 
                     movie.save() //Returns Promise
@@ -311,7 +337,7 @@ exports.createAMovie = (req,res) => {
                             message : `Error  ${err}`
                         })
                     })
-
+    
             })
             .catch(err => {
 
@@ -319,53 +345,8 @@ exports.createAMovie = (req,res) => {
                     message : `Error  ${err}`
                 })
             })
-    // }
-
-};
-
-    
-    // if(smallPosterImg === undefined || largePosterImg === undefined)
-    // {
-    //     const movie = new movieModel(newMovieData);
-
-    //     movie.save() //Returns Promise
-    //     .then(movie => {
-
-    //         res.status(201).json({
-    //             message : `A new movie was successfully CREATED with "default Img"`,
-    //             results : movie
-    //         })
-    //     })
-    //     .catch(err => {
-
-    //         res.status(500).json({
-    //             message : `Error  ${err}`
-    //         })
-    //     })
-    // }
-    // else
-    // {
-
-
-/************** Validation **************/
-
-
-/*         const movie = new movieModel(newMovieData);
-        movie.save()
-        .then(movie => {
-
-            res.status(201).json({
-                message : `A new movie was successfully CREATED`,
-                results : movie
-            })
-        })
-        .catch(err => {
-
-            res.status(500).json({
-                message : `Error  ${err}`
-            })
-        })
-}; */
+        }
+    };
 
 
 /************************************
@@ -473,85 +454,50 @@ exports.getASpecificMovie = (req,res) => {
 
 };
 
-// exports.getByTitles = (req,res)=>{
 
-//     if(req.query.title)
-//     {
-//         //Get an array of documents
-//         itemModel.find({title:req.query.title}) //.find() returns a promise (asynchronous code)
-
-//         .then((movie)=>{
-//             res.json({
-//                 message: `Sort by Title type: ${req.query.title}`,
-//                 data:items,
-//                 total:items.length
-//             })
-
-//         })
-//         .catch((err)=>{
-    
-//             res.status(500).json({
-//                 message: `Error occured ${err}`
-//             })
-//         })
-
-//     }
-//     else
-//     {
-//         itemModel.find() //.find() returns a promise (asynchronous code)
-
-//         .then((items)=>{
-//             res.json({
-//                 message: "A list of items in the game",
-//                 data:items,
-//                 total:items.length
-//             })
-
-//         })
-//         .catch((err)=>{
-        
-//             res.status(500).json({
-//                 message: `Error occured ${err}`
-//             })
-//         })
-//     }
-    
-// };
-
-
-
-
-
-
-
-
-
-
-
-
-/* 
+/************************************
+    SEARCH BAR
+************************************/
 exports.searchMovie = (req,res) => {
    
-    const searchInput = req.params.id
+    const searchInput = req.body.search
 
-    console.log(searchInput)
-
-    movieModel.aggregate()
-    [
-        {
-          '$search': {
-            'index': 'default_vudu', 
-            'text': {
-              'query': searchInput, 
-              'path': {
-                'wildcard': '*'
-              }
+        movieModel.aggregate(
+        [
+            {
+            '$search': {
+                'index': 'default_vudu',  //Cluster Name
+                'text': {                  // Type Data
+                'query': searchInput,   // Input Info to Query
+                'path': { 
+                    'wildcard': '*'    // Search All WILDCARD
+                }
+                }
             }
-          }
-        }
-    ]
+            }
+        ])
+        .then((movie)=>{
 
-}
+            if(movie.length === 0)
+            {
+                res.json({
+                    message: `No Matches for ${searchInput}`
+                })
+                }
+            else
+            {   
+                res.json({
+                    message: `Search Results of : ${searchInput}`,
+                    results:movie.length,
+                    data:movie
+                })
+            }
+        })
+        .catch((err)=>{
+        
+            res.status(500).json({
+                message: `Error occured ${err}`
+            })
+        })
 
-
- */
+};

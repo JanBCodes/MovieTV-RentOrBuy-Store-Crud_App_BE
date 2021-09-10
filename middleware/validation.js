@@ -1,7 +1,5 @@
 exports.validateIncomingTextData = (req,res,next)=>{
 
-    console.log(req.body);
-
     const errors = [];
 
     if(req.body.title === "")
@@ -31,38 +29,44 @@ exports.validateIncomingTextData = (req,res,next)=>{
 
     if(req.body.rating === "")
     {
-        errors.push("Sorry, Trailer Link cannot be blank")
+        errors.push("Sorry, Rating cannot be blank")
     }
 
     if(req.body.userScore === "")
     {
-        errors.push("Sorry, Trailer Link cannot be blank")
+        errors.push("Sorry, User Score cannot be blank")
     }
 
     if(req.body.runtime === "")
     {
-        errors.push("Sorry, Trailer Link cannot be blank")
+        errors.push("Sorry, Runtime cannot be blank")
     }
 
     if(req.body.priceToRent === "")
     {
-        errors.push("Sorry, Trailer Link cannot be blank")
+        errors.push("Sorry, Rental Price cannot be blank")
     }
 
     if(req.body.priceToBuy === "")
     {
-        errors.push("Sorry, Trailer Link cannot be blank")
+        errors.push("Sorry, Purchase Price cannot be blank")
     }
 
-    // if(req.body.smallPosterImg === "")
-    // {
-    //     errors.push("Sorry, Trailer Link cannot be blank")
-    // }
+/*     
+    console.log(req.files) = null
 
-    // if(req.body.largePosterImg === "")
-    // {
-    //     errors.push("Sorry, Trailer Link cannot be blank")
-    // }
+    if(req.files.smallPosterImg.mimetype.includes("image"))
+    {
+        errors.push("Please Upload an IMAGE")
+    }
+
+    if(req.files.largePosterImg.mimetype.includes("image"))
+
+    {
+        errors.push("Please Upload an IMAGE")
+    } 
+*/
+
 
     if(errors.length == 0)
     {
@@ -71,7 +75,7 @@ exports.validateIncomingTextData = (req,res,next)=>{
     else
     {
         res.status(400).json({
-            message: "Oops there are some errors with your entry, please fix. ",
+            message: "Please enter the correct information. ",
             errors
         })
     }

@@ -10,7 +10,7 @@ router.post(`/`, dataValidation.validateIncomingTextData, movieServices.createAM
 router.put(`/:id`, movieServices.updateAMovie);
 router.delete(`/:id`, movieServices.deleteAMovie);
 
-// router.post(`/search`, movieServices.searchMovie);
+router.post(`/search`, movieServices.searchMovie);
 
 
 module.exports = router;

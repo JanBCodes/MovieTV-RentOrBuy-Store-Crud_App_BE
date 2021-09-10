@@ -3,7 +3,7 @@ const express = require("express");
 const mongoose = require('mongoose');
 require('dotenv').config({ path: `config/keys.env`});
 const fileUpload = require('express-fileupload');
-const path = require('path')
+const path = require('path');
 
 
 /* Mapping the App Object to Express */
