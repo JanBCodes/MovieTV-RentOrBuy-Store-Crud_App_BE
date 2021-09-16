@@ -13,6 +13,7 @@ const app = express();
 /* Importing Controllers */
 const moviesController = require("./controller/movieController.js")
 const tvShowsController = require("./controller/tvShowsController.js")
+const adminController = require("./controller/adminController.js")
 
 
 /* Mapping Json to Every CRUD Command */
@@ -33,8 +34,10 @@ app.use(fileUpload()); // middleware for uploading files (False by default)
 
 
 /* Mapping CRUD Command using express.Router */
+// app.use("/", adminController)
 app.use("/movies", moviesController);
 app.use("/tvShows", tvShowsController);
+
 
 
 /* Setting Up Web Server */

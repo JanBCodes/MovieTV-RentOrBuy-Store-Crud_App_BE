@@ -3,7 +3,6 @@ const { Schema } = mongoose;
 
 const tvShowSchema = new Schema({
 
-
     title:
     {
         type: String,
@@ -19,10 +18,10 @@ const tvShowSchema = new Schema({
     trailer:
     {
         type: String,
-        required: false
+        required: true
     },
 
-    releaseDate:
+    releaseDate: //Y,M.D
     {
         type: Date,
         required: true
@@ -30,7 +29,8 @@ const tvShowSchema = new Schema({
 
     genre:
     {
-        type: String,
+        type: Array, //Check Boxes
+        default: "Other",
         required: true
     },
 
@@ -76,9 +76,17 @@ const tvShowSchema = new Schema({
         required: true
     },
 
-    featured:
+    isFeatured: // Drop Down List or Checked Box
     {
         type: Boolean,
+        default: true,
+        required: true
+    },
+
+    isNewRelease: // Drop Down List or Checked Box
+    {
+        type: Boolean,
+        default: true,
         required: true
     },
 
@@ -88,11 +96,9 @@ const tvShowSchema = new Schema({
         default:Date.now()
     }
     
-    
-
 });
 
-const tvShowModel = mongoose.model('tvshow', tvShowSchema);
+const tvShowModel = mongoose.model('TvShow', tvShowSchema);
 
 module.exports = tvShowModel;
 

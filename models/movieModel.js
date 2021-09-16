@@ -32,7 +32,6 @@ const movieSchema = new Schema({
         type: Array, //Check Boxes
         default: "Other",
         required: true
-        
     },
 
     rating:
