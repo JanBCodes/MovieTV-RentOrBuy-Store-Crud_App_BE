@@ -4,6 +4,12 @@ const mongoose = require('mongoose');
 require('dotenv').config({ path: `config/keys.env`});
 const fileUpload = require('express-fileupload');
 const path = require('path');
+const cors = require('cors')
+
+// if(process.env.NODE_ENV!="production")
+// {
+//     require('dotenv').config({path:"config/Keys.env"});
+// }
 
 
 /* Mapping the App Object to Express */
@@ -20,9 +26,9 @@ const adminController = require("./controller/adminController.js")
 app.use(express.json());
 
 
-// app.use(cors({
-//     origin: `${process.env.FE_CORS_ORIGIN}`
-// }));
+app.use(cors({
+    origin: `${process.env.FE_CORS_ORIGIN}`    
+}));
 
 
 /* Direct Path to Static Assets */
@@ -43,12 +49,14 @@ app.use("/tvShows", tvShowsController);
 /* Setting Up Web Server */
 app.listen(process.env.PORT,()=>{
 
-    console.log("Web Server Up and Running @PORT 3000")
+    console.log(`Web Server Up and Running @PORT ${process.env.PORT}`)
 
     /* Connecting to MONGO DB */
     mongoose.connect(`${process.env.MONGODB_CONN_STRING}`, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(() => {
         console.log(`MongoDb Connected`)
+        console.log(`FE Cors: ${process.env.FE_CORS_ORIGIN}`)
+
     })
     .catch(err => {
         console.log(`Error occurred : $${err}`)
