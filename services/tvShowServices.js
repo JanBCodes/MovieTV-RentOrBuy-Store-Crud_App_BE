@@ -188,7 +188,7 @@ exports.getAllTvShows = (req,res)=>{
     
                 message : `List of all TV shows`,
                 total : shows.length,
-                results : shows
+                data : shows
     
             })
         })
@@ -218,8 +218,9 @@ exports.createATvShow = (req,res) => {
 
         res.status(201).json({
             message : `A new Tv Show was successfully CREATED`,
-            results : show
-        })
+            total : show.length,
+            data : show
+    })
     })
     .catch(err => {
 
@@ -244,6 +245,7 @@ exports.deleteATvShow = (req,res)=>{
         {
             res.status(200).json({
                 message :`Movie with the ID: ${tvShowID} and Title: ${show.title} was DELETED successfully`
+
             })
         }
         else
@@ -315,7 +317,7 @@ exports.getASpecificTvShow = (req,res) => {
         {
             res.status(200).json({
                 message : `SPECIFIC Movie Details of ${TvShowID} with the Title: ${show.title} `,
-                results : show
+                data : show
             })
         }
         else
@@ -369,8 +371,8 @@ exports.searchTvShow = (req,res) => {
             {   
                 res.json({
                     message: `Search Results of : ${searchInput}`,
-                    results:tvShow.length,
-                    data:tvShow
+                    total : tvShow.length,
+                    data : tvShow
                 })
             }
         })
