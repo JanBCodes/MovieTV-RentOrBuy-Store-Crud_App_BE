@@ -66,8 +66,6 @@ exports.validateIncomingTextData = (req,res,next)=>{
         errors.push("Please Upload an IMAGE")
     } 
 */
-
-
     if(errors.length == 0)
     {
         next();
@@ -81,3 +79,4 @@ exports.validateIncomingTextData = (req,res,next)=>{
     }
    
 }
+

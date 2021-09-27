@@ -3,34 +3,6 @@ const { v4: uuidv4 } = require('uuid'); // Uniquely identifies Pics
 const movieModel = require("../models/movieModel.js")
 
 /************************************
-        GET ALL MOVIES 
-************************************/
-
-/* exports.getAllMovies = (req, res) => {
-
-    movieModel.find()
-    .then(movies => {
-
-        res.status(200).json({
-
-            message : `List of all movies (READ)`,
-            total : movies.length,
-            results : movies
-
-        })
-    })
-    .catch(err => {
-
-        res.status(500).json({
-
-            message : `Error  ${err}`
-        })
-
-    })    
-
-};
- */
-/************************************
         GET ALL MOVIES  && QUERY STRINGS 
 ************************************/
 exports.getAllMovies = (req,res)=>{
@@ -251,7 +223,7 @@ exports.createAMovie = (req,res) => {
 
         res.status(201).json({
             message : `A new movie was successfully CREATED`,
-            results : movie
+            data : movie
         })
     })
     .catch(err => {
@@ -435,7 +407,7 @@ exports.getASpecificMovie = (req,res) => {
         {
             res.status(200).json({
                 message : `SPECIFIC Movie Details of ${movieID} with the Title: ${movie.title} `,
-                results : movie
+                data : movie
             })
         }
         else
@@ -489,8 +461,8 @@ exports.searchMovie = (req,res) => {
             {   
                 res.json({
                     message: `Search Results of : ${searchInput}`,
-                    results:movie.length,
-                    data:movie
+                    total: movie.length,
+                    data: movie
                 })
             }
         })
