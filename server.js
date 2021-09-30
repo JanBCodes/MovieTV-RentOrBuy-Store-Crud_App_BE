@@ -47,7 +47,7 @@ app.use("/tvShows", tvShowsController);
 
 
 /* Setting Up Web Server */
-app.listen(process.env.PORT,()=>{
+app.listen(process.env.PORT, () => {
 
     console.log(`Web Server Up and Running @PORT ${process.env.PORT}`)
 
@@ -59,7 +59,7 @@ app.listen(process.env.PORT,()=>{
 
     })
     .catch(err => {
-        console.log(`Error occurred : $${err}`);
+        console.log(`Error occurred : ${err}`);
     }) 
 
 })

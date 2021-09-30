@@ -9,6 +9,12 @@ const tvShowSchema = new Schema({
         required: true
     },
 
+    type:
+    {
+        type: String,
+        required: true
+    },
+
     synopsis:
     {
         type: String,
