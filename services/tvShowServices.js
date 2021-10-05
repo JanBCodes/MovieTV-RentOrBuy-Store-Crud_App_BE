@@ -349,7 +349,7 @@ exports.searchTvShow = (req,res) => {
         [
             {
             '$search': {
-                'index': 'default_vudu',  //Cluster Name
+                'index': 'default_vudu_tv',  //Cluster Name
                 'text': {                  // Type Data
                 'query': searchInput,   // Input Info to Query
                 'path': { 

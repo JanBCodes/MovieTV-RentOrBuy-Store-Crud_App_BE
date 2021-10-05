@@ -1,4 +1,4 @@
-exports.validateIncomingTextData = (req,res,next)=>{
+exports.validateIncomingData = (req,res,next)=>{
 
     const errors = [];
 
