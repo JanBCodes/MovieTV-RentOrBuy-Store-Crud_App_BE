@@ -9,117 +9,70 @@ const tvShowModel = require("../models/tvShowModel.js")
 ************************************/
 exports.createAMovie = (req,res) => {
 
-    /*     // let absoluteAddressSM;
-        // let absoluteAddressBG;
-        // let smallPosterImg;
-        // let largePosterImg;
-        */
-        const newMovieData  = req.body
-    
-        const movie = new movieModel(newMovieData);
-    
-        movie.save() //Returns Promise
+    /*  
+        1. Check if anything was uploaded (undefined) Done
+        2. Check the Type of File
+        3. UUID the file & add route
+        4. Create Movie
+    */ 
+
+    /************** Validation of IMAGE TYPE for UpLoad **************/
+
+    if(!req.files)
+    {
+        req.body.smallPosterImg = "default.jpg"
+        req.body.largePosterImg = "default.jpg"
+    }
+    else 
+    {
+        if(!req.files.smallPosterImg)
+        {
+            req.body.smallPosterImg = "default.jpg"
+        }
+        else if(req.files.smallPosterImg.mimetype.includes("image"))
+        {        
+            const uuid = uuidv4();
+            const smallPosterImgUP = req.files.smallPosterImg.name
+            const uuidPicNameforSM = `${uuid}_${smallPosterImgUP}`
+            let absoluteAddressSM = `${process.cwd()}/assets/img/movieBannerSM/${uuidPicNameforSM}`
+            req.body.smallPosterImg = uuidPicNameforSM
+
+            req.files.smallPosterImg.mv(absoluteAddressSM) // Returns Promise (can take CB fn)
+        }
+
+        if(!req.files.largePosterImg)
+        {
+            req.body.largePosterImg = "default.jpg"
+        }
+        else if(req.files.largePosterImg.mimetype.includes("image"))
+        {        
+            const uuid = uuidv4();
+            const largePosterImgUP = req.files.largePosterImg.name
+            const uuidPicNameforBG = `${uuid}_${largePosterImgUP}`
+            let absoluteAddressBG = `${process.cwd()}/assets/img/movieBannerBIG/${uuidPicNameforBG}`
+            req.body.largePosterImg = uuidPicNameforBG
+
+            req.files.largePosterImg.mv(absoluteAddressBG) // Returns Promise (can take CB fn)
+
+        }
+    }
+
+    const movie = new movieModel(req.body);
+    movie.save() //Returns Promise
         .then(movie => {
-    
+
             res.status(201).json({
                 message : `A new movie was successfully CREATED`,
-                data : movie
+                results : movie
             })
         })
         .catch(err => {
-    
+
             res.status(500).json({
                 message : `Error  ${err}`
             })
         })
-    
-        
-    
-        // console.log(req.files) // if NULL no UPLOADs
-    
-        // if(req.files === null) // 
-        // {
-    
-        // }    
-        // else
-        // {
-    
-        //     smallPosterImg = req.files.smallPosterImg.mimetype //?? if undefined : Throws Error Fix!
-        //     largePosterImg = req.files.largePosterImg.mimetype //?? if undefined : Throws Error
-    
-    
-    
-        // }
-    
-        //     // smallPosterImg = req.files.smallPosterImg.mimetype //?? if undefined : Throws Error Fix!
-        //     // largePosterImg = req.files.largePosterImg.mimetype //?? if undefined : Throws Error
-    
-        // /************** Validation of IMAGE TYPE for UpLoad **************/
-    
-        // if(smallPosterImg.includes("image")) //return true/false
-        // {        
-        //     const uuid = uuidv4();
-        //     const smallPosterImgUP = req.files.smallPosterImg.name
-        //     const uuidPicNameforSM = `${uuid}_${smallPosterImgUP}`
-        //     absoluteAddressSM = `${process.cwd()}/assets/img/movieBannerSM/${uuidPicNameforSM}`
-        //     newMovieData.smallPosterImg = uuidPicNameforSM
-        // }
-        
-        // if (largePosterImg.includes("image") ) //return true/false
-        // {
-        //     const uuid = uuidv4();
-        //     const largePosterImgUP = req.files.largePosterImg.name
-        //     const uuidPicNameforBG = `${uuid}_${largePosterImgUP}`
-        //     absoluteAddressBG = `${process.cwd()}/assets/img/movieBannerBIG/${uuidPicNameforBG}`
-        //     newMovieData.largePosterImg = uuidPicNameforBG
-        // }
-    
-    
-    
-    
-    
-        // if(absoluteAddressSM == undefined || absoluteAddressBG == undefined)
-        // {
-        //     res.status(404).json({
-        //         message : `Please upload IMAGE Format or Leave Blank`
-        //     })
-        // }
-        // else
-        // {
-        //     console.log(absoluteAddressSM)
-        //     console.log(absoluteAddressBG)
-    
-        //         req.files.smallPosterImg.mv(absoluteAddressSM) // Returns Promise (can take CB fn)
-        //         req.files.largePosterImg.mv(absoluteAddressBG) // Returns Promise (can take CB fn)
-        //         .then(() => {
-                    
-        //             const movie = new movieModel(newMovieData);
-    
-        //                 movie.save() //Returns Promise
-        //                 .then(movie => {
-                
-        //                     res.status(201).json({
-        //                         message : `A new movie was successfully CREATED`,
-        //                         results : movie
-        //                     })
-        //                 })
-        //                 .catch(err => {
-                
-        //                     res.status(500).json({
-        //                         message : `Error  ${err}`
-        //                     })
-        //                 })
-        
-        //         })
-        //         .catch(err => {
-    
-        //             res.status(500).json({
-        //                 message : `Error  ${err}`
-        //             })
-        //         })
-        //     }
-    
-        };
+  };
     
     
     /************************************
@@ -152,6 +105,7 @@ exports.createAMovie = (req,res) => {
     
         }) 
     };
+         
     
     
     /************************************
@@ -236,10 +190,48 @@ exports.createAMovie = (req,res) => {
 ************************************/
 exports.createATvShow = (req,res) => {
   
-    const newTVData  = req.body
+        /************** Validation of IMAGE TYPE for UpLoad **************/
 
-    const tvShow = new tvShowModel(newTVData);
+    if(!req.files)
+    {
+        req.body.smallPosterImg = "default.jpg"
+        req.body.largePosterImg = "default.jpg"
+    }
+    else 
+    {
+        if(!req.files.smallPosterImg)
+        {
+            req.body.smallPosterImg = "default.jpg"
+        }
+        else if(req.files.smallPosterImg.mimetype.includes("image"))
+        {        
+            const uuid = uuidv4();
+            const smallPosterImgUP = req.files.smallPosterImg.name
+            const uuidPicNameforSM = `${uuid}_${smallPosterImgUP}`
+            let absoluteAddressSM = `${process.cwd()}/assets/img/movieBannerSM/${uuidPicNameforSM}`
+            req.body.smallPosterImg = uuidPicNameforSM
 
+            req.files.smallPosterImg.mv(absoluteAddressSM) // Returns Promise (can take CB fn)
+        }
+
+        if(!req.files.largePosterImg)
+        {
+            req.body.largePosterImg = "default.jpg"
+        }
+        else if(req.files.largePosterImg.mimetype.includes("image"))
+        {        
+            const uuid = uuidv4();
+            const largePosterImgUP = req.files.largePosterImg.name
+            const uuidPicNameforBG = `${uuid}_${largePosterImgUP}`
+            let absoluteAddressBG = `${process.cwd()}/assets/img/movieBannerBIG/${uuidPicNameforBG}`
+            req.body.largePosterImg = uuidPicNameforBG
+
+            req.files.largePosterImg.mv(absoluteAddressBG) // Returns Promise (can take CB fn)
+
+        }
+    }
+
+    const tvShow = new tvShowModel(req.body);
     tvShow.save() //Returns Promise
     .then(show => {
 
@@ -364,3 +356,71 @@ exports.getASpecificTvShow = (req,res) => {
 
 };
 
+/*******************************************************
+*******************************************************
+    QUICK ADMIN ROUTES FOR DB CLEANUP
+*******************************************************
+*******************************************************/
+
+/************************************
+DELETE A MOVIE BASED ON TITLE - POSTMAN QUICK CLEAN UP
+************************************/
+exports.deleteAllMoviesByTitle = (req,res)=>{
+
+    const movieID = req.params.title
+    
+    movieModel.findOneAndDelete({ title: `${movieID}`}) 
+    .then(movie => {
+        if(movie)
+        {
+            res.status(200).json({
+                message :`Movie with the ID: ${movieID} and Title: ${movie.title} was DELETED successfully`
+            })
+        }
+        else
+        {
+            res.status(404).json({
+                message : `Movie ${movieID} was not found`
+            })
+        }
+    })
+    .catch(err => {
+
+        res.status(500).json({
+            message : `Error  ${err}`
+        })
+
+    }) 
+};
+
+/************************************
+        DELETE A TV SHows BASED ON TITLE - POSTMAN QUICK CLEAN UP
+************************************/
+exports.deleteAllTVShowsByTitle = (req,res)=>{
+
+    const movieID = req.params.title
+    
+    tvShowModel.findOneAndDelete({ title: `${movieID}`}) 
+    .then(movie => {
+        if(movie)
+        {
+            res.status(200).json({
+                message :`Movie with the ID: ${movieID} and Title: ${movie.title} was DELETED successfully`
+            })
+        }
+        else
+        {
+            res.status(404).json({
+                message : `TV ${movieID} was not found`
+            })
+        }
+    })
+    .catch(err => {
+
+        res.status(500).json({
+            message : `Error  ${err}`
+        })
+
+    }) 
+};
+        

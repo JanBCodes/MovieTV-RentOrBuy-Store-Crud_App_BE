@@ -7,6 +7,11 @@ exports.validateIncomingData = (req,res,next)=>{
         errors.push("Sorry, Title cannot be blank")
     }
 
+    if(req.body.type === "")
+    {
+        errors.push("Sorry, Type cannot be blank")
+    }
+
     if(req.body.synopsis === "")
     {
         errors.push("Sorry, Synopsis cannot be blank")
@@ -32,9 +37,19 @@ exports.validateIncomingData = (req,res,next)=>{
         errors.push("Sorry, Rating cannot be blank")
     }
 
+    if(req.body.rating > 5 || req.body.rating < 0)
+    {
+        errors.push("Sorry, Rating must be between 0 & 5")
+    }
+
     if(req.body.userScore === "")
     {
         errors.push("Sorry, User Score cannot be blank")
+    }
+
+    if(req.body.userScore > 10 || req.body.userScore < 0)
+    {
+        errors.push("Sorry, User Score must be between 0 & 10")
     }
 
     if(req.body.runtime === "")
@@ -52,20 +67,6 @@ exports.validateIncomingData = (req,res,next)=>{
         errors.push("Sorry, Purchase Price cannot be blank")
     }
 
-/*     
-    console.log(req.files) = null
-
-    if(req.files.smallPosterImg.mimetype.includes("image"))
-    {
-        errors.push("Please Upload an IMAGE")
-    }
-
-    if(req.files.largePosterImg.mimetype.includes("image"))
-
-    {
-        errors.push("Please Upload an IMAGE")
-    } 
-*/
     if(errors.length == 0)
     {
         next();

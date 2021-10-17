@@ -27,7 +27,7 @@ const movieSchema = new Schema({
         required: true
     },
 
-    releaseDate: //Y,M.D
+    releaseDate: //    YYYY/MM/DD
     {
         type: Date,
         required: true
@@ -40,13 +40,13 @@ const movieSchema = new Schema({
         required: true
     },
 
-    rating:
+    rating: // 0 - 5
     {
         type: Number,
         required: true
     },
 
-    userScore:
+    userScore: // 0 - 10
     {
         type: Number,
         required: true
@@ -61,6 +61,7 @@ const movieSchema = new Schema({
     smallPosterImg:
     {
         type: String,
+        required: true,
         default: "default.jpg"
     },
 
@@ -85,7 +86,7 @@ const movieSchema = new Schema({
     isFeatured: // Drop Down List or Checked Box
     {
         type: Boolean,
-        default: true,
+        default: true,        
         required: true
     },
 
