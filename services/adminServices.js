@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require('uuid'); // Uniquely identifies Pics
+const AWS = require('aws-sdk');
 
 
 const movieModel = require("../models/movieModel.js")
@@ -16,62 +17,142 @@ exports.createAMovie = (req,res) => {
         4. Create Movie
     */ 
 
+
     /************** Validation of IMAGE TYPE for UpLoad **************/
 
-    if(!req.files)
-    {
-        req.body.smallPosterImg = "default.jpg"
-        req.body.largePosterImg = "default.jpg"
-    }
-    else 
-    {
-        if(!req.files.smallPosterImg)
-        {
-            req.body.smallPosterImg = "default.jpg"
-        }
-        else if(req.files.smallPosterImg.mimetype.includes("image"))
-        {        
-            const uuid = uuidv4();
-            const smallPosterImgUP = req.files.smallPosterImg.name
-            const uuidPicNameforSM = `${uuid}_${smallPosterImgUP}`
-            let absoluteAddressSM = `${process.cwd()}/assets/img/movieBannerSM/${uuidPicNameforSM}`
-            req.body.smallPosterImg = uuidPicNameforSM
+    // if(!req.files)
+    // {
+    //     req.body.smallPosterImg = "default.jpg"
+    //     req.body.largePosterImg = "default.jpg"
+    // }
+    // else 
+    // {
+    //     if(!req.files.smallPosterImg)
+    //     {
+    //         req.body.smallPosterImg = "default.jpg"
+    //     }
+    //     else if(req.files.smallPosterImg.mimetype.includes("image"))
+    //     {        
+    //         const uuid = uuidv4();
+    //         const smallPosterImgUP = req.files.smallPosterImg.name
+    //         const uuidPicNameforSM = `${uuid}_${smallPosterImgUP}`
+    //         let absoluteAddressSM = `${process.cwd()}/assets/img/movieBannerSM/${uuidPicNameforSM}`
+    //         req.body.smallPosterImg = uuidPicNameforSM
 
-            req.files.smallPosterImg.mv(absoluteAddressSM) // Returns Promise (can take CB fn)
-        }
+    //         req.files.smallPosterImg.mv(absoluteAddressSM) // Returns Promise (can take CB fn)
+    //     }
 
-        if(!req.files.largePosterImg)
-        {
-            req.body.largePosterImg = "default.jpg"
-        }
-        else if(req.files.largePosterImg.mimetype.includes("image"))
-        {        
-            const uuid = uuidv4();
-            const largePosterImgUP = req.files.largePosterImg.name
-            const uuidPicNameforBG = `${uuid}_${largePosterImgUP}`
-            let absoluteAddressBG = `${process.cwd()}/assets/img/movieBannerBIG/${uuidPicNameforBG}`
-            req.body.largePosterImg = uuidPicNameforBG
+    //     if(!req.files.largePosterImg)
+    //     {
+    //         req.body.largePosterImg = "default.jpg"
+    //     }
+    //     else if(req.files.largePosterImg.mimetype.includes("image"))
+    //     {        
+    //         const uuid = uuidv4();
+    //         const largePosterImgUP = req.files.largePosterImg.name
+    //         const uuidPicNameforBG = `${uuid}_${largePosterImgUP}`
+    //         let absoluteAddressBG = `${process.cwd()}/assets/img/movieBannerBIG/${uuidPicNameforBG}`
+    //         req.body.largePosterImg = uuidPicNameforBG
 
-            req.files.largePosterImg.mv(absoluteAddressBG) // Returns Promise (can take CB fn)
+    //         req.files.largePosterImg.mv(absoluteAddressBG) // Returns Promise (can take CB fn)
 
-        }
-    }
+    //     }
+    // }
 
-    const movie = new movieModel(req.body);
-    movie.save() //Returns Promise
-        .then(movie => {
+    /* This creates a special S3 Object, which we use to upload to the bucket  */
+    const s3 = new AWS.S3({
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey
+    });
 
-            res.status(201).json({
-                message : `A new movie was successfully CREATED`,
-                results : movie
+        const movie = new movieModel(req.body); //Json
+        movie.save() //Returns Promise
+            .then(movie => {
+
+                const uuid = uuidv4();
+
+                    /************** Validation of IMAGE TYPE for UpLoad **************/
+
+    // if(!req.files)
+    // {
+    //     req.body.smallPosterImg = "default.jpg"
+    //     req.body.largePosterImg = "default.jpg"
+    // }
+    // else 
+    // {
+    //     if(!req.files.smallPosterImg)
+    //     {
+    //         req.body.smallPosterImg = "default.jpg"
+    //     }
+    //     else if(req.files.smallPosterImg.mimetype.includes("image"))
+    //     {        
+    //         const uuid = uuidv4();
+    //         const smallPosterImgUP = req.files.smallPosterImg.name
+    //         const uuidPicNameforSM = `${uuid}_${smallPosterImgUP}`
+    //         let absoluteAddressSM = `${process.cwd()}/assets/img/movieBannerSM/${uuidPicNameforSM}`
+    //         req.body.smallPosterImg = uuidPicNameforSM
+
+    //         req.files.smallPosterImg.mv(absoluteAddressSM) // Returns Promise (can take CB fn)
+    //     }
+
+    //     if(!req.files.largePosterImg)
+    //     {
+    //         req.body.largePosterImg = "default.jpg"
+    //     }
+    //     else if(req.files.largePosterImg.mimetype.includes("image"))
+    //     {        
+    //         const uuid = uuidv4();
+    //         const largePosterImgUP = req.files.largePosterImg.name
+    //         const uuidPicNameforBG = `${uuid}_${largePosterImgUP}`
+    //         let absoluteAddressBG = `${process.cwd()}/assets/img/movieBannerBIG/${uuidPicNameforBG}`
+    //         req.body.largePosterImg = uuidPicNameforBG
+
+    //         req.files.largePosterImg.mv(absoluteAddressBG) // Returns Promise (can take CB fn)
+
+    //     }
+    // }
+
+                // Setting up S3 upload parameters
+                const params = {
+                    Bucket: process.env.BUCKET_NAME,
+                    Key: `${uuid}_${req.files.smallPosterImg.name}`, // File name you want to save as in S3
+                    Body: req.files.smallPosterImg.data // Buffer of Bytes
+                };
+
+                // Uploading files to the bucket
+                s3.upload(params, function(err, data) {
+                    if (err) {
+                    throw err;
+                    }
+
+                    movie.smallPosterImg = data.Location;
+
+                    
+                    movie.save() //resaves after adding location to Image, returns Promise
+                    .then(neWmovie => {
+
+                        res.status(201).json({
+                            message : `A new movie was successfully CREATED`,
+                            data : neWmovie
+                        })
+
+                    })
+                    .catch(err => {
+                
+                        res.status(500).json({
+                            message : `Error  ${err}`
+                        })
+                
+                    }) 
+                
+                });
             })
-        })
-        .catch(err => {
+            .catch(err => {
 
-            res.status(500).json({
-                message : `Error  ${err}`
+                res.status(500).json({
+                    message : `Error  ${err}`
+                })
             })
-        })
   };
     
     

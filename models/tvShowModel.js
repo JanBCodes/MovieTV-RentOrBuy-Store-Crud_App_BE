@@ -40,7 +40,7 @@ const tvShowSchema = new Schema({
         required: true
     },
 
-    rating:
+    rating: // MPA: G, PG, PG-13, R, NC-17
     {
         type: Number,
         required: true

@@ -40,9 +40,9 @@ const movieSchema = new Schema({
         required: true
     },
 
-    rating: // 0 - 5
+    rating: // MPA: G, PG, PG-13, R, NC-17
     {
-        type: Number,
+        type: String,
         required: true
     },
 
@@ -61,7 +61,7 @@ const movieSchema = new Schema({
     smallPosterImg:
     {
         type: String,
-        required: true,
+        // required: true,
         default: "default.jpg"
     },
 

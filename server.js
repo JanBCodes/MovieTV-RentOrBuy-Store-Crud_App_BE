@@ -25,6 +25,8 @@ const userController = require("./controller/userController.js");
 /* Mapping Json to Every CRUD Command */
 app.use(express.json());
 
+/* Mapping File Uploads to Every CRUD Command */
+app.use(fileUpload()); // middleware for uploading files (False by default)
 
 app.use(cors({
     origin: `${process.env.FE_CORS_ORIGIN}`    
@@ -33,10 +35,6 @@ app.use(cors({
 
 /* Direct Path to Static Assets */
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
-
-
-/* Mapping File Upload to Every CRUD Command */
-app.use(fileUpload()); // middleware for uploading files (False by default)
 
 
 /* Mapping CRUD Command using express.Router */
