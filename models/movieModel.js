@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+const { v4: uuidv4 } = require('uuid'); // Uniquely identifies Pics
+const AWS = require('aws-sdk');
+
+
 const movieSchema = new Schema({
 
     title:
@@ -29,46 +33,40 @@ const movieSchema = new Schema({
 
     releaseDate: //    YYYY/MM/DD
     {
-        type: Date,
-        required: true
+        type: Date
     },
 
     genre:
     {
         type: Array, //Check Boxes
-        default: "Other",
-        required: true
+        default: "Other"
     },
 
     rating: // MPA: G, PG, PG-13, R, NC-17
     {
-        type: String,
-        required: true
+        type: String
     },
 
     userScore: // 0 - 10
     {
-        type: Number,
-        required: true
+        type: Number //Check Boxes
     },
 
     runtime:
     {
-        type: Number,
-        required: true
+        type: Number
     },
 
     smallPosterImg:
     {
         type: String,
-        // required: true,
-        default: "default.jpg"
+        default: "https://s3.us-east-2.amazonaws.com/s3.images.sample/default.jpg"
     },
 
     largePosterImg:
     {
         type: String, 
-        default: "default.jpg"
+        default: "https://s3.us-east-2.amazonaws.com/s3.images.sample/default.jpg"
     },
 
     priceToRent:
@@ -86,15 +84,13 @@ const movieSchema = new Schema({
     isFeatured: // Drop Down List or Checked Box
     {
         type: Boolean,
-        default: true,        
-        required: true
+        default: true,
     },
 
     isNewRelease: // Drop Down List or Checked Box
     {
         type: Boolean,
         default: true,
-        required: true
     },
 
     dateCreated:
@@ -104,6 +100,114 @@ const movieSchema = new Schema({
     }
     
 });
+
+
+
+
+
+movieSchema.methods.intializeS3Bucket = function()  {
+
+    const s3 = new AWS.S3({
+        accessKeyId: process.env.AWSAccessKeyId,
+        secretAccessKey: process.env.AWSSecretKey
+    })
+
+    return s3
+
+}
+
+
+movieSchema.pre('save', function(next){
+
+    if(!this.files.smallPosterImg)
+    {
+        this.smallPosterImg
+
+        next()
+
+
+    } 
+    else if(this.files.smallPosterImg.mimetype.includes("image"))
+    {
+
+        const s3 = this.intializeS3Bucket()
+        const uuid = uuidv4();
+
+        // Setting up S3 upload parameters
+        const params = ({
+            Bucket: process.env.BUCKET_NAME,
+            Key: `${uuid}_${this.files.smallPosterImg.name}`, // File name you want to save as in S3
+            Body: this.files.smallPosterImg.data // Buffer of Bytes
+        })     
+
+           s3.upload(params, (err, data) => {
+
+            if (err) {
+            throw err;
+            }
+
+            this.smallPosterImg = data.Location;
+
+            next()
+
+        })
+    }
+    else
+    {
+        this.smallPosterImg
+        next()
+
+    }
+
+})
+
+
+
+movieSchema.pre('save', function(next){
+
+    if(!this.files.largePosterImg)
+    {
+        this.largePosterImg
+
+        next()
+
+
+    }
+    else if(this.files.largePosterImg.mimetype.includes("image"))
+    {
+        const s3 = this.intializeS3Bucket()
+        const uuid = uuidv4();
+
+        // Setting up S3 upload parameters
+        const params = ({
+            Bucket: process.env.BUCKET_NAME,
+            Key: `${uuid}_${this.files.largePosterImg.name}`, // File name you want to save as in S3
+            Body: this.files.largePosterImg.data // Buffer of Bytes
+        })     
+
+        s3.upload(params, (err, data) => {
+
+            if (err) {
+            throw err;
+            }
+
+            this.largePosterImg = data.Location;
+
+            next()
+
+        })
+
+    }
+    else
+    {
+        this.largePosterImg
+        next()
+
+    }
+    
+})
+
+
 
 const movieModel = mongoose.model('Movie', movieSchema);
 
